@@ -15,6 +15,7 @@ const Dashboard = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState(null);
   // console.log(currentUser);
+  
   const handlePhotoSelect = (file) => {
     setSelectedFile(file);
     setAnalysisResults(null);
@@ -77,7 +78,7 @@ const Dashboard = () => {
         <div className="space-y-8 animate-fade-in">
           {/* Header */}
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <h1 className="text-3xl font-bold">Welcome</h1>
             <p className="text-muted-foreground">
               Upload retina photos for AI-powered disease detection and analysis
             </p>
@@ -87,9 +88,8 @@ const Dashboard = () => {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               <PhotoUpload
-                onPhotoSelect={handlePhotoSelect}
-                onAnalyze={handleAnalyze}
-                isAnalyzing={isAnalyzing}
+                onAnalyzeComplete={setAnalysisResults} // ← Pass results to parent state
+                isAnalyzing={false}
               />
               
               {analysisResults && (

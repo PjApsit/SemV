@@ -3,37 +3,83 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Camera, Image, Loader2 } from "lucide-react";
 
-const PhotoUpload = ({ onPhotoSelect, onAnalyze, isAnalyzing }) => {
+const PhotoUpload = ({ onAnalyzeComplete, isAnalyzing }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const fileInputRef = useRef(null);
 
   const handleFileSelect = (file) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       setSelectedFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      onPhotoSelect(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
   const handleFileInputChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
+    if (file) handleFileSelect(file);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
+    if (file) handleFileSelect(file);
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
+  };
+
+  // Helper to map score to severity
+  const getSeverity = (score) => {
+    if (score < 0.5) return "low";
+    if (score < 0.8) return "medium";
+    return "high";
+  };
+
+  const handleAnalyzeClick = async () => {
+    if (!selectedFile) return alert("Please select an image first!");
+    if (!onAnalyzeComplete) return;
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const response = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
+
+      const data = await response.json();
+      console.log("Prediction result:", data);
+
+      // Format data for AnalysisResults
+      const scores = data.result?.scores; // <-- get nested scores safely
+      if (!scores) throw new Error("No scores returned from backend");
+      const results = Object.entries(scores).map(([condition, score]) => ({
+        condition,
+        probability: +(score * 100).toFixed(2),
+        severity: getSeverity(score),
+        description: `AI model predicts ${condition} with ${(score * 100).toFixed(2)}% confidence.`,
+      }));
+
+      const overallScore = Math.max(...Object.values(scores));
+
+
+      const overallRisk = getSeverity(overallScore);
+
+      // Pass the formatted data to parent
+      onAnalyzeComplete({
+        results,
+        overallRisk,
+        timestamp: new Date().toLocaleString(),
+      });
+    } catch (err) {
+      alert("Error analyzing image: " + err.message);
+      console.error(err);
+    }
   };
 
   return (
@@ -47,7 +93,7 @@ const PhotoUpload = ({ onPhotoSelect, onAnalyze, isAnalyzing }) => {
           Upload a retinal fundus photograph for AI-powered disease detection analysis
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         {/* Upload Area */}
         <div
@@ -63,7 +109,6 @@ const PhotoUpload = ({ onPhotoSelect, onAnalyze, isAnalyzing }) => {
             accept="image/*"
             className="hidden"
           />
-          
           {previewUrl ? (
             <div className="space-y-4">
               <img
@@ -71,9 +116,7 @@ const PhotoUpload = ({ onPhotoSelect, onAnalyze, isAnalyzing }) => {
                 alt="Selected retina photo"
                 className="max-w-full max-h-64 mx-auto rounded-lg shadow-md"
               />
-              <p className="text-sm text-muted-foreground">
-                {selectedFile?.name}
-              </p>
+              <p className="text-sm text-muted-foreground">{selectedFile?.name}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -82,9 +125,7 @@ const PhotoUpload = ({ onPhotoSelect, onAnalyze, isAnalyzing }) => {
               </div>
               <div className="space-y-2">
                 <p className="text-lg font-medium">Drop your retina photo here</p>
-                <p className="text-sm text-muted-foreground">
-                  or click to browse files
-                </p>
+                <p className="text-sm text-muted-foreground">or click to browse files</p>
               </div>
             </div>
           )}
@@ -101,7 +142,7 @@ const PhotoUpload = ({ onPhotoSelect, onAnalyze, isAnalyzing }) => {
             <Upload className="h-4 w-4 mr-2" />
             Choose File
           </Button>
-          
+
           <Button
             variant="outline"
             className="flex-1"
@@ -110,10 +151,10 @@ const PhotoUpload = ({ onPhotoSelect, onAnalyze, isAnalyzing }) => {
             <Camera className="h-4 w-4 mr-2" />
             Take Photo
           </Button>
-          
+
           <Button
             className="flex-1 hover-lift"
-            onClick={onAnalyze}
+            onClick={handleAnalyzeClick}
             disabled={!selectedFile || isAnalyzing}
           >
             {isAnalyzing ? (

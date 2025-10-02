@@ -9,7 +9,6 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
-import { AuthProvider } from "./AuthContext";
 
 const queryClient = new QueryClient();
 
@@ -18,7 +17,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <AuthProvider>
+      
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -29,7 +28,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
-      </AuthProvider>
+      
     </TooltipProvider>
   </QueryClientProvider>
 );
