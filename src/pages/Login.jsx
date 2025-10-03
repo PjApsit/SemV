@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,11 +11,15 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import bcrypt from "bcryptjs";
 
+import { UserContext } from "@/components/UserContext";
+
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
+  const { setUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   
@@ -31,7 +35,7 @@ const Login = () => {
   setIsLoading(true);
   try {
     // 🔍 Find user by email
-    console.log(formData);
+    // console.log(formData);
     const q = query(collection(db, "usercred"), where("email", "==", formData.email));
     const querySnapshot = await getDocs(q);
 
@@ -53,8 +57,9 @@ const Login = () => {
       return;
     }
 
-    // ✅ Success
-    navigate("/dashboard");
+  // ✅ Success
+  setUser(userDoc);
+  navigate("/dashboard");
 
   } catch (error) {
     console.error("Login error:", error);

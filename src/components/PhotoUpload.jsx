@@ -50,8 +50,7 @@ const PhotoUpload = ({ onAnalyzeComplete1,onAnalyzeComplete2, isAnalyzing, setIs
     const file = e.target.files?.[0];
     if (file) handleFileSelect(file);
     console.log("File changed:");
-    onAnalyzeComplete1(null);
-    onAnalyzeComplete2(null);
+    
   };
 
   const handleDrop = (e) => {
