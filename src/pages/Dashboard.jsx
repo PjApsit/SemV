@@ -11,59 +11,12 @@ import { Eye, FileText, Calendar, TrendingUp } from "lucide-react";
 
 // const [currentUser, setCurrentUser]= useContext(AuthContext);
 const Dashboard = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResults, setAnalysisResults] = useState(null);
-  // console.log(currentUser);
-  
-  const handlePhotoSelect = (file) => {
-    setSelectedFile(file);
-    setAnalysisResults(null);
-  };
+  const [analysisResults1, setAnalysisResults1] = useState(null);
+  const [analysisResults2, setAnalysisResults2] = useState(null);
 
-  const handleAnalyze = async () => {
-    if (!selectedFile) return;
-    
-    setIsAnalyzing(true);
-    
-    // Mock analysis - replace with actual AI model API call
-    setTimeout(() => {
-      const mockResults = {
-        results: [
-          {
-            condition: "Diabetic Retinopathy",
-            probability: 23,
-            severity: 'low',
-            description: "Early signs detected. Regular monitoring recommended."
-          },
-          {
-            condition: "Macular Degeneration",
-            probability: 12,
-            severity: 'low',
-            description: "Minimal indicators present. Continue routine eye exams."
-          },
-          {
-            condition: "Glaucoma",
-            probability: 8,
-            severity: 'low',
-            description: "Low probability detected. Maintain regular check-ups."
-          },
-          {
-            condition: "Normal Retina",
-            probability: 87,
-            severity: 'low',
-            description: "Retinal structure appears normal and healthy."
-          }
-        ],
-        overallRisk: 'low',
-        timestamp: new Date().toLocaleString()
-      };
-      
-      setAnalysisResults(mockResults);
-      setIsAnalyzing(false);
-    }, 3000);
-  };
 
+ //set api for recent analyses
   const recentAnalyses = [
     { id: 1, date: "2024-01-15", risk: "low", conditions: 2 },
     { id: 2, date: "2024-01-10", risk: "medium", conditions: 3 },
@@ -88,15 +41,28 @@ const Dashboard = () => {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               <PhotoUpload
-                onAnalyzeComplete={setAnalysisResults} // ← Pass results to parent state
+                onAnalyzeComplete1={setAnalysisResults1} 
+                onAnalyzeComplete2={setAnalysisResults2}
                 isAnalyzing={false}
+                setIsAnalyzing={setIsAnalyzing}
               />
-              
-              {analysisResults && (
+              {/* FOr model 1  */}
+              {analysisResults1 && (
+                console.log(analysisResults1),
                 <AnalysisResults
-                  results={analysisResults.results}
-                  overallRisk={analysisResults.overallRisk}
-                  timestamp={analysisResults.timestamp}
+                  results={analysisResults1.results}
+                  overallRisk={analysisResults1.overallRisk}
+                  timestamp={analysisResults1.timestamp}
+                />
+              )}
+
+              {/* For model 2 */}
+              {analysisResults2 && (
+                console.log(analysisResults2),
+                <AnalysisResults
+                  results={analysisResults2.results}
+                  overallRisk={analysisResults2.overallRisk}
+                  timestamp={analysisResults2.timestamp}
                 />
               )}
             </div>
