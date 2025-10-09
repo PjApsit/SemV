@@ -15,11 +15,17 @@ const Dashboard = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults1, setAnalysisResults1] = useState(null);
   const [analysisResults2, setAnalysisResults2] = useState(null);
-  
+  const [analysisResults3, setAnalysisResults3] = useState(null);
   const [totalScan, setTotalScan] = useState(0);
   const { user } = useContext(UserContext);
   const [recentAnalyses, setRecentAnalyses] = useState([]);
   const [processedScans, setProcessedScans] = useState([]);
+
+  const handleFileChange = () => {
+    setAnalysisResults1(null);
+    setAnalysisResults2(null);
+    setAnalysisResults3(null);
+  };
 
   //maping recent analyses to get overall risk and medium/high conditions count
   useEffect(() => {
@@ -46,11 +52,11 @@ const Dashboard = () => {
     });
 
   setProcessedScans(scans);
-}, [recentAnalyses]);
+  }, [recentAnalyses]);
 
-useEffect(() => {
-  setTotalScan(processedScans.length);
-}, [processedScans]);
+  useEffect(() => {
+    setTotalScan(processedScans.length);
+  }, [processedScans]);
 
   // Fetch recent analyses from Firestore
   const fetchRecentAnalyses = async () => {
@@ -68,7 +74,7 @@ useEffect(() => {
     risk: doc.data().risk,
   }));
   setRecentAnalyses(analyses);
-};
+  };
 
 useEffect(() => {
   fetchRecentAnalyses();
@@ -99,7 +105,23 @@ useEffect(() => {
     { id: 3, date: "2024-01-05", risk: "low", conditions: 1 },
   ];
   // console.log(user)
- 
+  
+  //health calculator
+  const healthyPercentage = (() => {
+    if (!processedScans.length) return 0;
+
+    // count high, medium, low scans
+    const highCount = processedScans.filter(s => s.overallRisk === "high").length;
+    const mediumCount = processedScans.filter(s => s.overallRisk === "medium").length;
+    const lowCount = processedScans.filter(s => s.overallRisk === "low").length;
+
+    // decide percentage based on majority risk
+    if (highCount > mediumCount && highCount > lowCount) return 60;
+    if (mediumCount > highCount && mediumCount > lowCount) return 80;
+    return 90; // mostly low risk
+  })();
+
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -127,8 +149,13 @@ useEffect(() => {
                   setAnalysisResults2(result);
                   saveAnalysisToFirestore(user?.user_id, result);
                 }}
+                onAnalyzeComplete3={(result) => {
+                  setAnalysisResults3(result);
+                  saveAnalysisToFirestore(user?.user_id, result);
+                }}
                 isAnalyzing={isAnalyzing}
                 setIsAnalyzing={setIsAnalyzing}
+                onFileChange={handleFileChange}
               />
               
               {/* FOr model 1  */}
@@ -146,6 +173,13 @@ useEffect(() => {
                   results={analysisResults2.results}
                   overallRisk={analysisResults2.overallRisk}
                   timestamp={analysisResults2.timestamp}
+                />
+              )}
+              {analysisResults3 && (
+                <AnalysisResults
+                  results={analysisResults3.results}
+                  overallRisk={analysisResults3.overallRisk}
+                  timestamp={analysisResults3.timestamp}
                 />
               )}
             </div>
@@ -175,7 +209,7 @@ useEffect(() => {
                         <TrendingUp className="h-5 w-5 text-success" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold">92%</p>
+                        <p className="text-2xl font-bold">{healthyPercentage}%</p>
                         <p className="text-sm text-muted-foreground">Healthy Results</p>
                       </div>
                     </div>
