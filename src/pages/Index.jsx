@@ -6,27 +6,28 @@ import { Eye, Shield, Zap, Users, ChevronRight, Star } from "lucide-react";
 
 const Index = () => {
   const features = [
-    {
-      icon: <Eye className="h-6 w-6" />,
-      title: "AI-Powered Analysis",
-      description: "Advanced machine learning algorithms analyze retinal images with medical-grade accuracy"
-    },
-    {
-      icon: <Shield className="h-6 w-6" />,
-      title: "Secure & Private",
-      description: "Your medical data is encrypted and protected with enterprise-level security"
-    },
-    {
-      icon: <Zap className="h-6 w-6" />,
-      title: "Instant Results",
-      description: "Get comprehensive analysis results within seconds of uploading your image"
-    },
-    {
-      icon: <Users className="h-6 w-6" />,
-      title: "Expert Validated",
-      description: "Our AI models are trained and validated by leading ophthalmologists worldwide"
-    }
+  {
+    icon: <Eye className="h-6 w-6" />,
+    title: "AI Retina Screening",
+    description: "Automatically detect potential eye conditions from retinal images using AI."
+  },
+  {
+    icon: <Shield className="h-6 w-6" />,
+    title: "Your Data, Secure",
+    description: "All uploaded retinal images are securely stored and fully private for your peace of mind."
+  },
+  {
+    icon: <Zap className="h-6 w-6" />,
+    title: "Fast & Accurate",
+    description: "Get instant analysis and risk assessment for common retinal diseases in seconds."
+  },
+  {
+    icon: <Users className="h-6 w-6" />,
+    title: "Medical-Grade Insights",
+    description: "Our AI models are designed based on recent data to provide reliable guidance."
+  }
   ];
+
 
   const testimonials = [
     {
@@ -77,15 +78,15 @@ const Index = () => {
             <div className="flex items-center justify-center space-x-8 text-sm opacity-80">
               <div className="flex items-center space-x-2">
                 <Shield className="h-4 w-4" />
-                <span>HIPAA Compliant</span>
+                <span>Instant Risk Assessment</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Star className="h-4 w-4" />
-                <span>FDA Approved AI</span>
+                <span>AI-Powered Eye Screening</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Users className="h-4 w-4" />
-                <span>10k+ Patients</span>
+                <span>Track Your Eye Health</span>
               </div>
             </div>
           </div>
@@ -98,7 +99,7 @@ const Index = () => {
           <div className="text-center space-y-4 mb-16 animate-slide-up">
             <h2 className="text-3xl md:text-4xl font-bold">Why Choose RetinaAI?</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Cutting-edge technology meets medical expertise for the most accurate retinal analysis
+              Smart technology gives a clear look at your eye health.
             </p>
           </div>
           
@@ -164,9 +165,9 @@ const Index = () => {
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold">Trusted by Professionals</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Created by</h2>
             <p className="text-xl text-muted-foreground">
-              See what medical professionals and patients say about RetinaAI
+                Students at APSIT.
             </p>
           </div>
           
@@ -230,7 +231,7 @@ const Index = () => {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            © 2024 RetinaAI. All rights reserved.
+            © 2025 RetinaAI. All rights reserved.
           </div>
         </div>
       </footer>

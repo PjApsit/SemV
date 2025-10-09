@@ -23,9 +23,11 @@ const Navigation = ({ isAuthenticated = false }) => {
                   Dashboard
                 </Button>
               </Link>
-              <Button variant="outline" size="sm">
-                Sign Out
-              </Button>
+              <Link to="/">
+                <Button variant="outline" size="sm">
+                  Sign Out
+                </Button>
+              </Link>
             </>
           ) : (
             <>

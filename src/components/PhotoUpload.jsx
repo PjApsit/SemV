@@ -188,6 +188,50 @@ const PhotoUpload = ({
     }
   };
 
+  
+  // Camera capture
+  const captureFromCamera = async () => {
+    try {
+      // 1️⃣ Get camera stream
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.createElement("video");
+        video.srcObject = stream;
+        video.play();
+
+        // 2️⃣ Show the video to user in a small popup or overlay (optional)
+        const videoOverlay = document.createElement("div");
+        videoOverlay.style.position = "fixed";
+        videoOverlay.style.top = "50%";
+        videoOverlay.style.left = "50%";
+        videoOverlay.style.transform = "translate(-50%, -50%)";
+        videoOverlay.style.zIndex = 9999;
+        videoOverlay.style.background = "#000";
+        videoOverlay.style.padding = "10px";
+        videoOverlay.style.borderRadius = "8px";
+        videoOverlay.appendChild(video);
+        document.body.appendChild(videoOverlay);
+
+        // 3️⃣ Wait 5 seconds for user to adjust position
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
+        // 4️⃣ Capture photo
+        const track = stream.getVideoTracks()[0];
+        const imageCapture = new ImageCapture(track);
+        const photoBlob = await imageCapture.takePhoto();
+        const file = new File([photoBlob], "photo.jpg", { type: "image/jpeg" });
+        handleFileSelect(file);
+
+        // 5️⃣ Cleanup
+        track.stop();
+        document.body.removeChild(videoOverlay);
+
+      } catch (err) {
+        console.error("Camera error:", err);
+        alert("Could not access camera");
+      }
+    };
+
+
   return (
     <Card className="medical-card">
       <CardHeader>
@@ -256,7 +300,12 @@ const PhotoUpload = ({
             Choose File
           </Button>
 
-          <Button variant="outline" className="flex-1" disabled={isAnalyzing}>
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={captureFromCamera} // <-- use the camera
+            disabled={isAnalyzing}
+          >
             <Camera className="h-4 w-4 mr-2" />
             Take Photo
           </Button>
